@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="card setup-card">
+    <h2>Reporting Configuration</h2>
+    <p>Configure the parameters for your implementation report.</p>
+
+    {% if error %}
+    <div class="status-msg error" style="display: block;">{{ error }}</div>
+    {% endif %}
+
+    <form action="/generate" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Account Name</label>
+            <input type="text" name="account_name" placeholder="e.g. SHAWARMER" value="SHAWARMER" required>
+        </div>
+
+        <div class="form-group">
+            <label>Form IDs (comma separated)</label>
+            <input type="text" name="form_ids" placeholder="IMPFORM115, IMPFORM127" value="IMPFORM115, IMPFORM127"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label>Month (MM-YYYY)</label>
+            <input type="text" name="month_year" placeholder="01-2026" value="01-2026" required>
+        </div>
+
+        <div class="form-group">
+            <label>Store Entity IDs (comma separated, optional)</label>
+            <input type="text" name="store_ids" placeholder="101, 102, 103">
+        </div>
+
+        <div class="form-group">
+            <label>Client Objective (Manual Override)</label>
+            <textarea name="manual_objective" rows="2"
+                placeholder="e.g. Reduce food waste by 15% through stricter morning inventory checks."
+                style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border); font-family: inherit;"></textarea>
+            <small style="color: var(--text-light); font-size: 0.75rem;">If empty, objective will be inferred from CSV
+                headers.</small>
+        </div>
+
+        <div class="form-group">
+            <label>Upload Client Brief (PDF/Excel - Optional)</label>
+            <input type="file" name="client_brief" accept=".pdf,.xlsx,.xls,.doc,.docx">
+            <small style="color: var(--text-light); font-size: 0.75rem;">(Coming soon: Automatic extraction from
+                document)</small>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn-primary">Generate Dashboard</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

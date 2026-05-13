@@ -1,0 +1,21 @@
+{
+    "api": {
+        "subdomain": "impl4.taqtics.co",
+        "username": "YOUR_USERNAME",
+        "password": "YOUR_PASSWORD"
+    },
+    "account": {
+        "name": "SHAWARMER",
+        "store_entity_ids": [123, 456, 789],
+        "form_ids": ["IMPFORM115", "IMPFORM127"]
+    },
+    "risk_thresholds": {
+        "completion_critical": 60,
+        "compliance_critical": 75,
+        "recency_days": 7
+    },
+    "email": {
+        "recipient": "client@example.com",
+        "sender": "reports@taqtics.co"
+    }
+}

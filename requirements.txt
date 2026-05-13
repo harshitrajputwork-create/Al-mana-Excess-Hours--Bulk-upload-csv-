@@ -1,0 +1,5 @@
+pandas
+requests
+jinja2
+python-dotenv
+flask

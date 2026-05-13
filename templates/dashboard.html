@@ -1,0 +1,159 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="dashboard-header">
+    <div class="header-main">
+        <h1>{{ account_name }}</h1>
+        <span class="badge {{ health_data.status.lower().replace(' ', '-') }}">{{ health_data.status }}</span>
+        <span class="period-label">{{ month }}</span>
+    </div>
+    <div class="health-summary">
+        <div class="score-circle">
+            <span class="score">{{ health_data.health_score|round|int }}</span>
+            <span class="label">Health Score</span>
+        </div>
+        <div class="status-details">
+            <h3>{{ health_data.label }}</h3>
+            <ul>
+                {% for risk in health_data.risks %}
+                <li>⚠️ {{ risk }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="metrics-grid">
+    <div class="metric-card">
+        <label>Total Submissions</label>
+        <span class="value">{{ metrics.total_submissions }}</span>
+    </div>
+    <div class="metric-card">
+        <label>Avg. Compliance</label>
+        <span class="value">{{ metrics.avg_compliance|round(1) }}%</span>
+    </div>
+    <div class="metric-card">
+        <label>Store Coverage</label>
+        <span class="value">{{ (metrics.store_coverage)|round(1) }}%</span>
+    </div>
+    <div class="metric-card">
+        <label>Last Activity</label>
+        <span class="value date">{{ metrics.last_submission_date.split(' ')[0] }}</span>
+    </div>
+</div>
+
+{% if alignment_data %}
+<section class="alignment-section">
+    <div class="card alignment-card">
+        <div class="alignment-header">
+            <div class="objective-info">
+                <label>Analyzed Business Objective</label>
+                <h2>{{ alignment_data.objective }}</h2>
+                <small class="rationale"><b>Rationale:</b> {{ alignment_data.summary }}</small>
+            </div>
+            <div class="alignment-score-box">
+                <span class="score">{{ alignment_data.alignment_score|round|int }}%</span>
+                <span class="label">Alignment Score</span>
+            </div>
+        </div>
+
+        <div class="pillar-grid">
+            {% for pillar, score in alignment_data.pillar_coverage.items() %}
+            <div class="pillar-item">
+                <div class="pillar-meta">
+                    <span class="pillar-name">{{ pillar }}</span>
+                    <span class="pillar-score">{{ score|round|int }}%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width:{{ score|round|int }}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="insight-container">
+            <div class="recommendations-box">
+                <h4>🚀 Actionable Recommendations</h4>
+                <ul>
+                    {% for rec in alignment_data.recommendations %}
+                    <li>{{ rec }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            {% if alignment_data.column_warnings %}
+            <div class="column-warnings-box">
+                <h4>🚩 Column-Level Gaps</h4>
+                <p>These specific CSV columns are lacking quality data:</p>
+                <div class="tag-cloud">
+                    {% for col in alignment_data.column_warnings %}
+                    <span class="warning-tag">{{ col }}</span>
+                    {% endfor %}
+                </div>
+                <small>Impact: Causes low diversification and pencil-whipping risks.</small>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="store-breakdown">
+    <h2>Store-wise Breakdown</h2>
+    <div class="store-grid">
+        {% for store_id, s_metrics in metrics.store_breakdown.items() %}
+        <div class="store-card">
+            <div class="store-title">
+                <h4>{{ store_id }}</h4>
+                <span
+                    class="status-dot {{ health_data.store_health[store_id].status.lower().replace(' ', '-') }}"></span>
+            </div>
+            <div class="store-stats">
+                <div class="stat">
+                    <label>Submissions</label>
+                    <span class="val">{{ s_metrics.submissions }}</span>
+                </div>
+                <div class="stat">
+                    <label>Compliance</label>
+                    <span class="val">{{ s_metrics.avg_compliance|round(1) }}%</span>
+                </div>
+            </div>
+            <div class="store-footer">
+                <span class="last-sub">Last: {{ s_metrics.last_submission.split(' ')[0] }}</span>
+                <span class="health-tag">{{ health_data.store_health[store_id].status }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="weekly-section">
+    <h2>Weekly Progress</h2>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Week</th>
+                    <th>Submissions</th>
+                    <th>Avg. Compliance</th>
+                    <th>Coverage %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for w in metrics.weekly_metrics %}
+                <tr>
+                    <td>{{ w.week }}</td>
+                    <td>{{ w.cumulative_submissions }}</td>
+                    <td>{{ w.avg_compliance|round(1) }}%</td>
+                    <td>{{ w.store_coverage|round(1) }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<div class="actions-footer">
+    <button onclick="window.print()" class="btn-secondary">Download PDF Report</button>
+    <a href="{{ url_for('setup') }}" class="btn-primary">Generate Another</a>
+</div>
+{% endblock %}
